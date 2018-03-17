@@ -127,3 +127,25 @@ adv_stats <- html_table(tables[[1]], fill=TRUE)
 
 ```
 
+As you can see, the advanced game log can also use some of the same initial wrangling to clean up the data. 
+
+```{r}
+# initial wrangling
+clean_adv_stats <- adv_stats[-c(3:10,23)]
+clean_adv_stats <- clean_adv_stats %>%
+  filter(Rk != "Rk")
+
+```
+
+Let's join the two datasets so that it is easier to see which games the advanced stats are from. 
+
+```{r}
+# join the normal and advanced game log tables
+combined_stats <- full_join(clean_stats, clean_adv_stats) %>%
+  filter(!is.na(Location)) %>%
+  mutate_each(funs(as.numeric), c(`TS%`, `eFG%`, `ORB%`, `DRB%`, `TRB%`,`AST%`, `STL%`, `BLK%`, `TOV%`, `USG%`, ORtg, DRtg)) %>%
+  arrange(`USG%`)
+
+glimpse(combined_stats)
+
+```
