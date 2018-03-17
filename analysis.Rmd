@@ -112,3 +112,18 @@ plot1 <- clean_stats %>%
 plot1
 
 ```
+
+To take a closer look at Joel's impact while he's on the court, we can look at his advanced stats, which can also be found at [basketball-reference]("https://www.basketball-reference.com/players/e/embiijo01/gamelog-advanced/2018/"). 
+
+```{r}
+adv_url <- "https://www.basketball-reference.com/players/e/embiijo01/gamelog-advanced/2018/"
+
+# scrape html and store table
+tables <- adv_url %>%
+  read_html() %>%
+  html_nodes(css = "table")
+
+adv_stats <- html_table(tables[[1]], fill=TRUE)
+
+```
+
