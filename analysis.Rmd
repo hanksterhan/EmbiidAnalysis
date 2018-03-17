@@ -169,3 +169,76 @@ plot2 <- ggplot(data=combined_stats, aes(x=MP, y=`PTS`, shape=WinLose)) +
 plot2
 
 ```
+
+Initially, we can see that there is a slight upward trend between minutes played and points scored. However, there is no clear trend between minutes played and usage rate. There is a slight trend that the higher Joel's usage rate, the more points he scores. Let's go further and look at more specific stats like +/-: a measure of how the team fares against their opponent when a player is on the court. For example, a player with a +/- of 8 means that when that player is on the court, their team outscores their opponent by 8 points. 
+
+```{r}
+# summarize key stats by usage rate
+
+# summary for games with usage rate above 40%
+summary_above_40 <- usage_rate_above_40 %>%
+  summarise(`USG%` = round(mean(`USG%`), 2),
+            `max +/-` = round(max(`+/-`), 2),
+            `min +/-` = round(min(`+/-`), 2),
+            `+/-` = round(mean(`+/-`), 2),
+            Margin = round(mean(Margin), 2),
+            numWins = sum(WinLose == 'Win'),
+            numLosses = sum(WinLose == 'Lose'),
+            MP = round(mean(MP), 2),
+            PTS = round(mean(PTS), 2),
+            TRB = round(mean(TRB), 2),
+            AST = round(mean(AST), 2),
+            STL = round(mean(STL), 2),
+            BLK = round(mean(BLK), 2),
+            TOV = round(mean(TOV), 2),
+            `eFG%` = round(mean(`eFG%`), 2),
+            `TS%` = round(mean(`TS%`), 2))
+
+# summary for games with usage rate under 30%
+summary_under_30 <- usage_rate_under_30 %>%
+  summarise(`USG%` = round(mean(`USG%`), 2),
+            `max +/-` = round(max(`+/-`), 2),
+            `min +/-` = round(min(`+/-`), 2),
+            `+/-` = round(mean(`+/-`), 2),
+            Margin = round(mean(Margin), 2),
+            numWins = sum(WinLose == 'Win'),
+            numLosses = sum(WinLose == 'Lose'),
+            MP = round(mean(MP), 2),
+            PTS = round(mean(PTS), 2),
+            TRB = round(mean(TRB), 2),
+            AST = round(mean(AST), 2),
+            STL = round(mean(STL), 2),
+            BLK = round(mean(BLK), 2),
+            TOV = round(mean(TOV), 2),
+            `eFG%` = round(mean(`eFG%`), 2),
+            `TS%` = round(mean(`TS%`), 2))
+
+# summary for games with usage rate between 30% and 40%
+# first, impute to account for a "NA" in the `+/-` column
+ds_preproc <- preProcess(usage_rate_30_40, method = c("medianImpute"))
+usage_rate_30_40_proc <- predict(ds_preproc, usage_rate_30_40)
+
+summary_30_40 <- usage_rate_30_40_proc %>%
+  summarise(`USG%` = round(mean(`USG%`), 2),
+            `max +/-` = round(max(`+/-`), 2),
+            `min +/-` = round(min(`+/-`), 2),
+            `+/-` = round(mean(`+/-`), 2),
+            Margin = round(mean(Margin), 2),
+            numWins = sum(WinLose == 'Win'),
+            numLosses = sum(WinLose == 'Lose'),
+            MP = round(mean(MP), 2),
+            PTS = round(mean(PTS), 2),
+            TRB = round(mean(TRB), 2),
+            AST = round(mean(AST), 2),
+            STL = round(mean(STL), 2),
+            BLK = round(mean(BLK), 2),
+            TOV = round(mean(TOV), 2),
+            `eFG%` = round(mean(`eFG%`), 2),
+            `TS%` = round(mean(`TS%`), 2))
+
+summary_combined <- bind_rows(summary_under_30, summary_30_40, summary_above_40)
+summary_combined <- cbind(`Usage Rate` = c('20-30%', '30-40%', '40%+'), summary_combined)
+
+summary_combined
+
+```
