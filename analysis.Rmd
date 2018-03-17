@@ -46,3 +46,34 @@ inactive_stats <- clean_stats %>%
 inactive_stats
 
 ```
+
+To continue, we filtered out rows for games that Joel did not play in, as well as repeated rows containing column names. In addition, the location column was renamed and recoded to display "Away/Home" rather than "@" and nothing. We also took the WinLoseComb column and separated it into "Win/Loss" and the numerical margin of victory. 
+
+```{r}
+# filter out rows for games that Joel did not play
+# also filter out additional column name rows
+clean_stats <- filter(clean_stats, GS == 1)
+
+# clean up location and margin of victory columns
+clean_stats <- clean_stats %>%
+  mutate(Location = as.factor(ifelse(Location == '@', "Away", "Home"))) %>%
+  mutate(WinLose = as.factor(ifelse(grepl("W", WinLoseComb), "Win", "Lose"))) %>%
+  mutate(Margin = gsub("L", "", WinLoseComb)) %>%
+  mutate(Margin = gsub("W", "", Margin)) %>%
+  mutate(Margin = gsub("\\)", "", Margin)) %>%
+  mutate(Margin = gsub("\\(", "", Margin)) %>%
+  mutate(Margin = gsub(" ", "", Margin)) %>%
+  mutate(Margin = as.numeric(gsub("+", "", Margin)))
+
+clean_stats <- clean_stats[-c(5)]
+
+# clean up miscellaneous variable names and formats
+clean_stats <- clean_stats %>%
+  mutate(`+/-` = gsub("+", "", `+/-`)) %>%
+  mutate_each(funs(as.numeric), c(GS, FG, FGA, `FG%`, `3P`, `3PA`, `3P%`, FT, FTA, `FT%`, ORB, DRB, TRB, AST, STL, BLK, TOV, PF, PTS, GmSc, `+/-`, Margin)) %>%
+  mutate_each(funs(as.factor), c(Rk, G, Location, Opp, WinLose)) %>%
+  mutate(MP = round(as.numeric(ms(MP))/60, 2))
+  
+glimpse(clean_stats)
+
+```
