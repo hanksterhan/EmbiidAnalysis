@@ -149,3 +149,23 @@ combined_stats <- full_join(clean_stats, clean_adv_stats) %>%
 glimpse(combined_stats)
 
 ```
+
+A player's usage rate is a metric that estimates the percentage of the team's possessions a player uses while they are in the game. A 25% usage rate means that 25% of plays ended with that player either shooting the ball, turning the ball over, or getting to the free throw line. Usage rate serves as a metric that shows how involved a player is in their team's offense. Let's take a closer look at Joel's usage rate and how that affects his other stats and ultimately the outcome of the game. 
+
+```{r}
+# group all games by Joel's usage rate
+usage_rate_under_30 <- filter(combined_stats, `USG%` < 30)
+usage_rate_30_40 <- filter(combined_stats, `USG%` < 40 & `USG%` >= 30)
+usage_rate_above_40 <- filter(combined_stats, `USG%` >= 40) 
+
+# plot minutes played against points scored
+plot2 <- ggplot(data=combined_stats, aes(x=MP, y=`PTS`, shape=WinLose)) +
+  geom_point(data=usage_rate_under_30, alpha=0.6, size = 7, color='red') +
+  geom_point(data=usage_rate_30_40, alpha=0.6, size = 7, color='green') + 
+  geom_point(data=usage_rate_above_40, alpha=0.6, size = 7, color='blue') + 
+  labs(x="Minutes Played", y="Points", title="Minutes Played vs. Points Scored", subtitle="Data from basketball reference\n\nRed: USG<30%, Green: 30%<USG<40%, Blue: 40%<USG") +
+  theme_economist()
+
+plot2
+
+```
