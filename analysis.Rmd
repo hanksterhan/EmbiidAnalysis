@@ -9,3 +9,15 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 Joel Embiid has been a matchup nightmare ever since he debuted as a rookie last year for the Philadelphia 76ers. In just 31 games played before he had a season-ending injury, he showcased a skillset that drew comparisons to NBA legends Hakeem Olajuwon and Shaquille O'Neal. How can a rookie turn so many heads in just a handful of games? A 250lb 7-footer who played soccer and volleyball until junior year in high school, Joel is a monster of a player who can out-physical anyone in the NBA, out run any big man in the NBA, and has a shooting touch to shoot 36% from beyond the 3-point arc as a rookie. The question then is, how exactly do the 76ers get better or worse when Joel plays on the court? Just how dominating has he been? To start, we need to scrape the data from [basketball-reference](https://www.basketball-reference.com/players/e/embiijo01/gamelog/2018/).
+
+```{r}
+url <- "https://www.basketball-reference.com/players/e/embiijo01/gamelog/2018/"
+
+# scrape html and store table
+tables <- url %>%
+  read_html() %>%
+  html_nodes(css = "table")
+
+stats <- html_table(tables[[8]], fill=TRUE)
+
+```
